@@ -1,0 +1,1238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+				  xmlns:rsp="http://retail.example.com/service"
+				  xmlns:ns="http://retail.example.com/sdo"
+				  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+				  targetNamespace="http://retail.example.com/service">
+	<wsdl:types>
+		<xs:schema xmlns="http://retail.example.com/sdo" elementFormDefault="qualified"
+				   targetNamespace="http://retail.example.com/sdo"
+				   attributeFormDefault="unqualified"><!--Include Schema:UpdateUserInfoRequest.xsd--><!--Include Schema:common/RspRequestResponse.xsd--><!--Include Schema:Header.xsd--><!--Include Schema:DealerCode.xsd--><xs:simpleType name="DealerCode">
+			<xs:annotation>
+				<xs:documentation>A 7-character, T-Mobile-assigned code used to identify a specific store, district, or
+					region,
+					defined by a partner and used in calculating commissions.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:restriction base="xs:token">
+				<xs:length value="7"/>
+				<xs:pattern value="[0-9]{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+			<!--Include Schema:PartnerId.xsd--><xs:simpleType name="PartnerId">
+				<xs:annotation>
+					<xs:documentation>
+						Uniquely identifies an internal or external
+						partner/consumer.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="30"/>
+					<xs:pattern value="[A-Z]+"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:Application.xsd--><xs:simpleType name="Application">
+				<xs:annotation>
+					<xs:documentation>
+						An identifier that can be used to uniquely identify the
+						application, system, or tool that is being used to
+						perform the transaction(s) related to a request.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="30"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:Channel.xsd--><xs:simpleType name="Channel">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the business unit or sales channel through
+						(and for) which a transaction is being
+						requested/performed.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="30"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="Header">
+				<xs:annotation>
+					<xs:documentation>
+						Header describes the contextual information for an RSP operation. It also facilitates Tracking,
+						Routing, and Troubleshooting.
+					</xs:documentation>
+
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="partnerId" type="PartnerId">
+						<xs:annotation>
+							<xs:documentation>
+								Uniquely identifies an internal or external
+								partner/consumer within RSP who is sending
+								requests to RSP services. PartnerId also allows
+								a partner/consumer to access a their customized
+								catalog.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="servicePartnerId" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Uniquely identifies Service Partner ID
+								within RSP who is sending requests to RSP services.
+								PartnerId also allows a partner/consumer
+								to access a their customized catalog.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="requestId" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Uniquely identifies the service request.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="transactionType" type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Uniquely identifies the type of work-flow.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="partnerSessionId" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								A value populated by the partner/consumer used
+								to track their session. Do not use
+								customer-sensitive information.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:minLength value="3"/>
+								<xs:pattern value="[A-Za-z0-9_ .,/:;\-@*]+"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="partnerTransactionId">
+						<xs:annotation>
+							<xs:documentation>
+								A value populated by the partner/consumer used
+								to track their workflow. Partners are encouraged
+								to develop a useful scheme. This ID is sent back
+								as part of the response. Do not use
+								customer-sensitive information.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:minLength value="3"/>
+								<xs:pattern value="[A-Za-z0-9_ .,/:;\-@*]+"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="partnerTimestamp" type="xs:dateTime">
+						<xs:annotation>
+							<xs:documentation>
+								A timestamp provided by a partner/consumer used
+								to track their workflow.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="application" maxOccurs="1" minOccurs="0" type="Application">
+						<xs:annotation>
+							<xs:documentation>
+								An identifier that can be used to uniquely
+								identify the application, system, or tool that
+								is being used to perform the transaction(s)
+								related to this request. Property values
+								relating to the target system are derived using
+								partner, application, and channel information.
+								If the application has not been defined, a
+								default value may be assigned.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="applicationUserId" type="xs:token" maxOccurs="1" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								UserId that was utilized to access the
+								application making the request
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="channel" maxOccurs="1" minOccurs="0" type="Channel">
+						<xs:annotation>
+							<xs:documentation>
+								Indicates the business unit or sales channel
+								through (and for) which this transaction is
+								being requested. Property values relating to the
+								target system are derived using partner,
+								application, and channel information. If the
+								channel has not been defined, a default value
+								may be assigned.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="targetSystemUserId" type="xs:token" maxOccurs="1" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								An identifier that is defined in the target
+								system that should be utilized to execute all or
+								portion of the transaction. This may be a user
+								id that is trust based (shared) or may be an
+								individual user defined in the target system.
+								For example, this would represent the OPERATOR
+								ID in the billing system.
+
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="storeId" default="9999" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Value assigned by T-Mobile that uniquely
+								identifies a store. Default is set to 9999 to
+								denote external partners/consumers.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:token">
+								<xs:maxLength value="8"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="dealerCode" type="DealerCode">
+						<xs:annotation>
+							<xs:documentation>
+								Identifies the dealer representative that is
+								executing the operation. Used to assign
+								commissions and track operation usage.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="userNameType"  type="xs:string" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Identifies the usernametype.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+
+					<xs:element name="rspTransactionId" type="xs:token" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								This value is generated to track activities
+								within a request.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="authenticatedId" type="xs:token" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Used internally by RSP to hold identity key of
+								authenticated user that is making request. It's
+								also returned in response as verification of
+								caller identity.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="rspServiceVersion" type="xs:token" default="1.41.0">
+					<xs:annotation>
+						<xs:documentation>
+							Indicates service interface version. Facilitates any special handling needed for concurrent
+							versions. The attribute is a fixed value that reflects the latest version of the interface.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:complexType>
+			<!--Include Schema:ServiceStatus.xsd--><!--Include Schema:StatusItem.xsd--><xs:complexType name="StatusItem">
+				<xs:annotation>
+					<xs:documentation>
+						A number code and associated description returned in all
+						service responses to indicate whether an operation
+						completed successfully, completed with errors, or
+						failed.
+					</xs:documentation>
+				</xs:annotation>
+
+				<xs:sequence>
+					<xs:element name="statusCode" type="xs:token">
+						<xs:annotation>
+							<xs:documentation>
+								A number code used to depict the status of a
+								service response. This code allows developers to
+								programmatically handle the status.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="statusDescription" type="xs:normalizedString">
+						<xs:annotation>
+							<xs:documentation>
+								A definition of statusCode.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="explanation" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Optional information related to a statusCode to
+								further define the result of a request. .
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="referenceId" type="xs:token" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								A unique identifier used to locate a service log
+								message; useful for debugging the issues.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="ServiceStatusEnum">
+				<xs:annotation>
+					<xs:documentation>
+						A three-digit code and associated text (the status
+						condition) returned in each response to indicate whether
+						an operation completed successfully, completed with
+						errors, or failed.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="100">
+						<xs:annotation>
+							<xs:documentation>
+								Operation completed normally, result is positive
+								or useful
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="101">
+						<xs:annotation>
+							<xs:documentation>
+								Operation completed, check details for
+								explanation of mixed results
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="102">
+						<xs:annotation>
+							<xs:documentation>
+								Operation did not complete normally, there is a
+								problem with the request or generating a result
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="103">
+						<xs:annotation>
+							<xs:documentation>
+								Processing failed, service is not available
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="104">
+						<xs:annotation>
+							<xs:documentation>
+								Processing failed, could be temporary, recommend a retry
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="ServiceStatus">
+				<xs:sequence>
+					<xs:element name="serviceStatusCode" type="ServiceStatusEnum"/>
+					<xs:element name="serviceStatusItem" type="StatusItem" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>
+								Status details that describe one or more contribution the overall service status.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="RspRequest" abstract="true">
+				<xs:annotation>
+					<xs:documentation>The basics of any request.</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="header" type="Header" minOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="RspResponse" abstract="true">
+				<xs:annotation>
+					<xs:documentation>The basics of any response.</xs:documentation>
+				</xs:annotation>
+				<xs:complexContent>
+					<xs:extension base="RspRequest">
+						<xs:sequence>
+							<xs:element name="serviceStatus" type="ServiceStatus" minOccurs="1"/>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<!--Include Schema:common/MarketCode.xsd--><xs:simpleType name="MarketCode">
+				<xs:annotation>
+					<xs:documentation>
+						Code for a market (e.g., "SEW," for Seattle WA, or
+						"ATG," for Atlanta GA).
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token">
+					<xs:length value="3"/>
+					<xs:pattern value="[A-Z]{3}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:common/Email.xsd--><xs:simpleType name="Email">
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="255"/>
+					<xs:whiteSpace value="collapse"/>
+					<xs:pattern value="([\.a-zA-Z0-9_\-+])+@([a-zA-Z0-9_\-])+(([a-zA-Z0-9_\-])*\.([a-zA-Z0-9_\-])+)+"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:common/Phone.xsd--><xs:simpleType name="Phone">
+				<xs:restriction base="xs:token">
+					<xs:pattern value="[0-9]{10}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:common/UserId.xsd--><xs:simpleType name="UserId">
+				<xs:annotation>
+					<xs:documentation>The User Id that needs to be authenticated and authorized</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token"/>
+			</xs:simpleType>
+			<!--Include Schema:common/Password.xsd--><xs:simpleType name="Password">
+				<xs:annotation>
+					<xs:documentation>Password</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token">
+					<xs:minLength value="6"/>
+					<xs:maxLength value="30"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:common/PersonalName.xsd--><!--Include Schema:AReferenceObject.xsd--><xs:complexType name="AReferenceObject">
+				<xs:annotation>
+					<xs:documentation>
+						Represents a code and description that are used as
+						reference data.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="code" type="ReferenceCode"/>
+					<xs:element name="description" type="xs:string" maxOccurs="1" minOccurs="0"/>
+					<xs:element name="alternateDescription" type="xs:string" maxOccurs="1" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Alternate description that may be more user friendly for display or other purposes
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="ReferenceCode">
+				<xs:annotation>
+					<xs:documentation>
+						A short and referenceable representation of a recurring
+						description or term. For example, an Individual Account
+						may be represented as "IND".
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:token">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="50"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="CodeAndDescription">
+				<xs:simpleContent>
+					<xs:extension base="xs:normalizedString">
+						<xs:attribute name="code" type="ReferenceCode">
+							<xs:annotation>
+								<xs:documentation>
+									A complexType representing code and description. Use this when it is not desired to
+									create/extend AReferenceObject.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="PersonalName">
+				<xs:annotation>
+					<xs:documentation>The individual name type.</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="nameTitle" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Title for the name like Dr., Sir. etc..</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:maxLength value="5"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="additionalTitle" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Title for the name like Dr., Sir. etc..</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:maxLength value="60"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="firstName" minOccurs="0" type="xs:normalizedString">
+						<xs:annotation>
+							<xs:documentation>First name of the person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="middleName" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Middle Initial of the person</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:minLength value="1"/>
+								<xs:maxLength value="32"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="lastName" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Last name of the person or business entity</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:minLength value="1"/>
+								<xs:maxLength value="60"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="nameSuffix" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Name suffix like Jr, Sr</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:normalizedString">
+								<xs:maxLength value="12"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="nameType" type="ReferenceCode" maxOccurs="1" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Indicates the type of name that this instance represents, such as Billing, AuthorizedUser, User,
+								etc.,
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="legalFirstName" minOccurs="0" type="xs:normalizedString">
+						<xs:annotation>
+							<xs:documentation>Legal First Name of the person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="legalLastName" minOccurs="0" type="xs:normalizedString">
+						<xs:annotation>
+							<xs:documentation>Legal Last Name of the person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="legalMiddleName" minOccurs="0" type="xs:normalizedString">
+						<xs:annotation>
+							<xs:documentation>Legal Middle Name of the person</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ReferencedName">
+				<xs:complexContent>
+					<xs:extension base="PersonalName">
+						<xs:sequence>
+							<xs:element name="nameId" type="xs:long">
+								<xs:annotation>
+									<xs:documentation>
+										Unique identifier for this address as defined per the system
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="linkSeqNbr" type="xs:long" maxOccurs="1" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										Unique identifier that indicates the record to which this name is linked to -
+										specific to the billing system
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="UpdateUserInfoRequest">
+				<xs:annotation>
+					<xs:documentation>This service update dealer info into back end systems.</xs:documentation>
+
+				</xs:annotation>
+				<xs:complexContent mixed="false">
+					<xs:extension base="RspRequest">
+						<xs:sequence>
+							<xs:element name="defaultPaymentVendor" type="xs:normalizedString" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										Dealer default payment vendor
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="defaultDealerLanguage" type="xs:normalizedString" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										Dealer default language
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="defaultMarket" type="MarketCode" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										Dealer default Market.The market code representing an area, such as "SEW," for Seattle WA, or "ATG," for
+										Atlanta GA.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="lastLoginDate" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										This attribute holds the value of dealers last login date.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="usageAgreement" type="xs:token" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										This attribute holds the value of “Terms and conditions acceptance” by the dealer.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="dealerWorkstations" type="xs:normalizedString" minOccurs="0"
+										maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>
+										Dealer wants to give a name to their workstation where RSA tokens are installed.  This attribute can contains values
+										like East-entrance, Jim’s machine, etc.,
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="dealerName" type="PersonalName" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation> Name details of the dealer.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="mobileNumber" type="Phone" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Mobile phone number of the user</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="emailId" type="Email" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Email address of the user</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="userCredentials" type="UserCredentials" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>User credentials of the user. This will be used if the user credentials like user id, password need to be updated</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="UserCredentials">
+				<xs:sequence>
+					<xs:element name="userId" type="UserId">
+						<xs:annotation>
+							<xs:documentation>User Id of the user</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="passwordCredentials" type="PasswordCredentials" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Password credentials of the user. This will be populated only for updating the user password</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="PasswordCredentials">
+				<xs:sequence>
+					<xs:element name="currentPassword" type="Password">
+						<xs:annotation>
+							<xs:documentation>Current password of the user</xs:documentation>
+						</xs:annotation>
+
+					</xs:element>
+					<xs:element name="newPassword" type="Password">
+						<xs:annotation>
+							<xs:documentation>New password of the user</xs:documentation>
+						</xs:annotation>
+
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="updateUserInfoRequest" type="UpdateUserInfoRequest"/>
+			<!--Include Schema:UpdateUserInfoResponse.xsd--><!--Include Schema:common/RspRequestResponse.xsd--><!--Include Schema:Header.xsd--><!--Include Schema:DealerCode.xsd--><!--Include Schema:PartnerId.xsd--><!--Include Schema:Application.xsd--><!--Include Schema:Channel.xsd--><!--Include Schema:ServiceStatus.xsd--><!--Include Schema:StatusItem.xsd--><xs:complexType name="UpdateUserInfoResponse">
+				<xs:complexContent mixed="false">
+					<xs:extension base="RspResponse">
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="updateUserInfoResponse" type="UpdateUserInfoResponse"/>
+			<!--Include Schema:UserInfoRequest.xsd--><!--Include Schema:common/UserId.xsd--><!--Include Schema:common/RspRequestResponse.xsd--><!--Include Schema:Header.xsd--><!--Include Schema:DealerCode.xsd--><!--Include Schema:PartnerId.xsd--><!--Include Schema:Application.xsd--><!--Include Schema:Channel.xsd--><!--Include Schema:ServiceStatus.xsd--><!--Include Schema:StatusItem.xsd--><!--Include Schema:common/enum/Applications.xsd--><xs:simpleType name="ApplicationsEnum">
+				<xs:annotation>
+					<xs:documentation>
+						Application Name from which the Request is Originating for the HandSetUpgrade Operations.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Streamline"/>
+					<xs:enumeration value="Cam"/>
+					<xs:enumeration value="Cui"/>
+					<xs:enumeration value="Campaign"/>
+					<xs:enumeration value="example"/>
+					<xs:enumeration value="SpeechIvr"/>
+					<xs:enumeration value="ICam"/>
+					<xs:enumeration value="AASP"/>
+					<xs:enumeration value="LTVO"/>
+					<xs:enumeration value="TIBCO"/>
+					<xs:enumeration value="Samson"/>
+					<xs:enumeration value="HandSetOrder"/>
+					<xs:enumeration value="Vertex"/>
+					<xs:enumeration value="EADB"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:common/CommonSimpleTypes.xsd--><xs:simpleType name="StringLengthUpTo2">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 3 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="2"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo3">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 3 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="3"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo4">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 4 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="4"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo5">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 5 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="5"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo8">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 8 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="8"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo10">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 10 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="10"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo15">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 15 (normalized)</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="15"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo20">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 20</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="20"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo50">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 50</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="50"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLengthUpTo100">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 100</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:maxLength value="100"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLength1To5">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 5 (normalized) with at least on character</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="5"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLength1To10">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 10 (normalized)  with at least on character</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="10"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLength1To15">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 15 (normalized)  with at least on character</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="15"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLength1To20">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 20  with at least on character</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="20"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLength1To50">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 50  with at least on character</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="50"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="StringLength1To100">
+				<xs:annotation>
+					<xs:documentation>General string with length up to 100  with at least on character</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="100"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="AlphaNumericStringLength1to10">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing alpha-numeric characters only - length up to 10. Only characters 0-9, a-z, and A-Z are
+						allowed.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[0-9a-zA-Z]{1,10}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="AlphaNumericStringLength1to20">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing alpha-numeric characters only - length up to 20. Only characters 0-9, a-z, and A-Z are
+						allowed.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[0-9a-zA-Z]{1,20}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="AlphaStringLength1to5">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing a-z or A-Z characters only - length up to 5.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[a-zA-Z]{1,5}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="AlphaStringLength1to10">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing a-z or A-Z characters only - length up to 10
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[a-zA-Z]{1,10}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="AlphaStringLength1to20">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing a-z or A-Z characters only - length up to 20
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[a-zA-Z]{1,20}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="AlphaStringLength1to50">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing a-z or A-Z characters only - length up to 50
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[a-zA-Z]{1,50}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="NumericStringLength1to5">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing numeric characters only - length up to 5
+
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[0-9]{1,5}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="NumericStringLength1to10">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing numeric characters only - length up to 10
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[0-9]{1,10}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="NumericStringLength1to20">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						String containing numeric characters only - length up to 20
+					</xs:documentation>
+				</xs:annotation>
+				<xs:restriction base="xs:normalizedString">
+					<xs:pattern value="[0-9]{1,20}"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!--Include Schema:common/Email.xsd--><xs:complexType name="UserInfoRequest" mixed="false">
+				<xs:annotation>
+					<xs:documentation>This service provides user information like first name, last name, employee number, etc.</xs:documentation>
+
+				</xs:annotation>
+				<xs:complexContent mixed="false">
+					<xs:extension base="RspRequest">
+						<xs:sequence>
+							<xs:choice>
+								<xs:element name="userId" type="UserId">
+									<xs:annotation>
+										<xs:documentation>The User Id for which the user information can be retrieved</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="employeeNumber" type="StringLength1To15">
+									<xs:annotation>
+										<xs:documentation>
+											The Employee Number for which the user information can be retrieved and this attribute accepts P# and C#
+										</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+								<xs:element name="emailId" type="Email">
+									<xs:annotation>
+										<xs:documentation>
+											The User email Id for which the user information can be retrieved
+										</xs:documentation>
+									</xs:annotation>
+								</xs:element>
+							</xs:choice>
+							<xs:element name="systemIdsToRetrieve" type="ApplicationsEnum" minOccurs="0"
+										maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>
+										Provide the list of system names for which the id (user id) should be retrieved that
+										corresponds to this user login. If the service is not implemented for that system,
+										the entry will be ignored and will not be present in the output.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="returnAccountInfo" type="xs:boolean" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Set this boolean to true if the response should include additional attributes of the User
+										such as hasAnExistingPostpaidAccount, provisionedDate, discountEligibility and location.
+										Please refer to the documentation for these respective elements in the response for details.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="userInfoRequest" type="UserInfoRequest"/>
+			<!--Include Schema:UserInfoResponse.xsd--><!--Include Schema:common/RspRequestResponse.xsd--><!--Include Schema:Header.xsd--><!--Include Schema:DealerCode.xsd--><!--Include Schema:PartnerId.xsd--><!--Include Schema:Application.xsd--><!--Include Schema:Channel.xsd--><!--Include Schema:ServiceStatus.xsd--><!--Include Schema:StatusItem.xsd--><!--Include Schema:common/UserInfo.xsd--><!--Include Schema:PersonalName.xsd--><!--Include Schema:AReferenceObject.xsd--><!--Include Schema:CommonSimpleTypes.xsd--><!--Include Schema:enum/Applications.xsd--><!--Include Schema:UserId.xsd--><xs:complexType name="UserInfo">
+				<xs:annotation>
+					<xs:documentation>
+						UserInfo is returned if the includeUserInfo was set to true or certain system user ids were requested.
+					</xs:documentation>
+
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="userId" type="UserId" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>The User Id for which the dealer and channel information is retrieved.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="department" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Represents the department of the User.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="title" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Represents the title of the User.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="userName" type="PersonalName" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Name of the individual as registered in the
+								security system. This is provided if
+								includeUserInfo is true in the request.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="employeeNumber" type="StringLength1To15" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Identity Number of the individual as registered
+								in the security system (typically same as HR
+								system). This is provided if includeUserInfo is
+								true in the request.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="systemUserInfo" type="SystemUserInfo" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>
+								Info containing user id for the systems
+								specified in the service request. If a
+								particular system was requested and the user id
+								is not available or implemented, it will not be
+								present in this list. This list is provided if
+								any systemIdsToRetrieve was provided
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="hasAnExistingPostpaidAccount" type="xs:boolean" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>When this boolean returns true, it means the requested User has a valid postpaid account with TMUS.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="provisionedDate" type="xs:dateTime" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>This is the date when the User was initially Provisioned into TMUS</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="discountEligibility" type="xs:token" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>This returns the current eligibility status for discount that the User may be eligible to redeem.
+								Possible values that may be returned are as follows.
+								- ELIGIBLE when the User is eligible for a discount.
+								- NOT_ELIGIBLE when the User is not eligible for a discount.
+								- NULL when the User is not setup for discount.
+								- CHECK_NT_ID_AGE suggests the Client system to use the provisionedDate value to check if it has been more than 59 days
+								since the account was created. If the Client system determines the NT ID has been older than 59 days, that means the
+								Client system can declare the User is eligible for a discount.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="location" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Represents the location of the User. Normally this is the location of the dealership</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="SystemUserInfo">
+				<xs:annotation>
+					<xs:documentation>Represents a system name and the target system user id for the user.</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="systemName" type="ApplicationsEnum">
+						<xs:annotation>
+							<xs:documentation>
+								Name of the system to which this instance of info belongs or comes from
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="systemUserId" type="StringLength1To15" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>User Id as registered in the respective target system</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<!--Include Schema:common/DealerDetail.xsd--><!--Include Schema:DealerCode.xsd--><!--Include Schema:UserId.xsd--><!--Include Schema:AReferenceObject.xsd--><!--Include Schema:MarketCode.xsd--><xs:complexType name="DealerDetail">
+				<xs:annotation>
+					<xs:documentation>
+						DealerDetail such as dealer code, channel info such as billing sales channel and channel type and the
+						corresponding user id is returned.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="dealerCode" type="DealerCode">
+						<xs:annotation>
+							<xs:documentation>
+								A 7-character dealer code uniquely identifies a dealer, One dealer code would be assigned per employee per channel.
+								This is used for calculating sales commission.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="channelInfo" type="CodeAndDescription" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Contains Billing Sales Channel and Channel Type Description for a given dealer</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="dealerName" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Dealer name
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="brand" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Brand
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="defaultDealerLanguage" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Default dealer language
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="defaultPaymentVendor" type="xs:normalizedString" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Default Payment vendor
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="defaultMarket" type="MarketCode" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Dealer default Market.The market code representing an area, such as "SEW," for Seattle WA, or "ATG," for
+								Atlanta GA.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Returns User informations like first name, last name, employee number, etc.</xs:documentation>
+			</xs:annotation>
+			<xs:complexType name="UserInfoResponse">
+				<xs:complexContent mixed="false">
+					<xs:extension base="RspResponse">
+						<xs:sequence>
+							<xs:element name="userInfo" type="UserInfo" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										UserInfo containing username, employeenumber, etc. This may be returned if the request requested
+										to include userInfo or requested system userIds.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="dealerDetail" type="DealerDetail" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>
+										DealerDetail containing user id, dealer code, and channel information. This may be returned if the response
+										contains the channel information for a given user.
+									</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="userInfoResponse" type="UserInfoResponse"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="UpdateUserInfoRequestMessage">
+		<wsdl:part name="UpdateUserInfoRequest" element="ns:updateUserInfoRequest"/>
+	</wsdl:message>
+	<wsdl:message name="UserInfoRequestMessage">
+		<wsdl:part name="UserInfoRequest" element="ns:userInfoRequest"/>
+	</wsdl:message>
+	<wsdl:message name="UserInfoResponseMessage">
+		<wsdl:part name="UserInfoResponse" element="ns:userInfoResponse"/>
+	</wsdl:message>
+	<wsdl:message name="UpdateUserInfoResponseMessage">
+		<wsdl:part name="UpdateUserInfoResponse" element="ns:updateUserInfoResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="UserInfoServicePortType">
+		<wsdl:operation name="getUserInfo">
+			<wsdl:documentation>This operation retrieves the informations of an user from backend systems like OVD, Samson,etc</wsdl:documentation>
+			<wsdl:input message="rsp:UserInfoRequestMessage"/>
+			<wsdl:output message="rsp:UserInfoResponseMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="updateUserInfo">
+			<wsdl:documentation>This operation updates specific fields associated with a Dealer code</wsdl:documentation>
+			<wsdl:input message="rsp:UpdateUserInfoRequestMessage"/>
+			<wsdl:output message="rsp:UpdateUserInfoResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="UserInfoServiceSOAPBinding" type="rsp:UserInfoServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getUserInfo">
+			<soap:operation soapAction="getUserInfo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateUserInfo">
+			<soap:operation soapAction="updateUserInfo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="UserInfoService">
+		<wsdl:documentation>This Service communicates with various backend systems like OVD, Samson, etc., to retrieve User details</wsdl:documentation>
+		<wsdl:port name="UserInfoServiceSOAPPort" binding="rsp:UserInfoServiceSOAPBinding">
+			<soap:address location="http://localhost:7001/eProxy/service/UserInfoService_SOAP_V1"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
